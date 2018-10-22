@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
+
+        <TextView
+            android:id="@+id/rosterTitle_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="16dp"
+            android:background="@color/colorTeamBackground"
+            android:text="Roster"
+            android:textSize="16sp"
+            android:textColor="@color/colorText" />
+
+        <TextView
+            android:id="@+id/playerInfo_text"
+            android:layout_below="@id/rosterTitle_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@color/colorTeamBackground"
+            android:textSize="12sp"
+            android:textColor="@color/colorText">
+
+        </TextView>
+
+        <TextView
+            android:id="@+id/tableCount_text"
+            android:layout_below="@id/playerInfo_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@color/colorTeamBackground"
+            android:textSize="12sp"
+            android:textColor="@color/colorText">
+
+        </TextView>
+
+
+</RelativeLayout>
