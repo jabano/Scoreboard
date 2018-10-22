@@ -61,14 +61,24 @@ public class RosterActivity extends AppCompatActivity {
                 + "Team ID: " + roster.getTeamId() + "\n"
                 + "Player ID: " + roster.getPlayerId());
 
-        mDbHelper.addPlayer(new RosterEvent(roster.getPlayerId(), roster.getName()));
+        mDbHelper.addPlayer(new RosterEvent(roster.getPlayerId(), roster.getName(), roster.getNumber(), roster.getRole(), roster.getGivenName(), roster.getFamilyName(),
+                roster.getHometown(), roster.getNationality(), roster.getTeamId()));
+
+
         List<RosterEvent> players = mDbHelper.getAllPlayers();
 
 
         TextView display = findViewById(R.id.tableCount_text);
 
+
         for(RosterEvent r:players) {
-            String log = "ID: " + r.getPlayerId() + ", Name: " + r.getName();
+            String log = "Name: " + r.getName() + "\n"
+                    + "Player Number: " + r.getNumber() + "\n"
+                    + "Role: " + r.getRole() + "\n"
+                    + "Full Name: " + r.getGivenName()+ " " + r.getFamilyName() + "\n"
+                    + "Hometown: " + r.getHometown() + ", " + r.getNationality() + "\n"
+                    + "Team ID: " + r.getTeamId() + "\n"
+                    + "Player ID: " + r.getPlayerId();
             display.setText(log + "\n");
         }
 
