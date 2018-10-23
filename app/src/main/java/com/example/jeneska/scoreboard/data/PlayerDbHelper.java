@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.BaseColumns;
 import android.widget.TextView;
 
 import com.example.jeneska.scoreboard.R;
@@ -25,7 +26,7 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
 
     //Create table string
     private static final String SQL_CREATE_PLAYER_TABLE = "CREATE TABLE " + PlayerEntry.PLAYER_TABLE + " (" +
-            PlayerEntry.COLUMN_PLAYER_ID + " INTEGER PRIMARY KEY, " +
+            PlayerEntry.COLUMN_PLAYER_ID + " INTEGER, " +
             PlayerEntry.COLUMN_PLAYER_NAME + " TEXT, " +
             PlayerEntry.COLUMN_PLAYER_NUMBER + " INTEGER, " +
             PlayerEntry.COLUMN_ROLE + " TEXT, " +
@@ -73,15 +74,15 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String [] projection = {
-            PlayerEntry.COLUMN_PLAYER_ID, //0, int
-            PlayerEntry.COLUMN_PLAYER_NAME, //1
-            PlayerEntry.COLUMN_PLAYER_NUMBER, //2, int
-            PlayerEntry.COLUMN_ROLE, //3
-            PlayerEntry.COLUMN_GIVEN_NAME, //4
-            PlayerEntry.COLUMN_FAMILY_NAME, //5
-            PlayerEntry.COLUMN_HOMETOWN, //6
-            PlayerEntry.COLUMN_NATIONALITY, //7
-            PlayerEntry.COLUMN_TEAM_ID //8, int
+                PlayerEntry.COLUMN_PLAYER_ID, //0, int
+                PlayerEntry.COLUMN_PLAYER_NAME, //1
+                PlayerEntry.COLUMN_PLAYER_NUMBER, //2, int
+                PlayerEntry.COLUMN_ROLE, //3
+                PlayerEntry.COLUMN_GIVEN_NAME, //4
+                PlayerEntry.COLUMN_FAMILY_NAME, //5
+                PlayerEntry.COLUMN_HOMETOWN, //6
+                PlayerEntry.COLUMN_NATIONALITY, //7
+                PlayerEntry.COLUMN_TEAM_ID //8, int
         };
 
         String selection = PlayerEntry.COLUMN_PLAYER_ID + "=?";
@@ -91,9 +92,9 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
         if(cursor != null)
             cursor.moveToFirst();
 
-        RosterEvent roster = new RosterEvent(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)),
-                cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7),
-                Integer.parseInt(cursor.getString(8)));
+        RosterEvent roster = new RosterEvent(Integer.parseInt(cursor.getString(0)), cursor.getString(1),
+                Integer.parseInt(cursor.getString(2)), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
+                cursor.getString(7),Integer.parseInt(cursor.getString(8)));
 
         return roster;
     }
@@ -109,7 +110,7 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
         if(cursor.moveToFirst()) {
             do {
                 RosterEvent roster = new RosterEvent();
-                roster.setID(Integer.parseInt(cursor.getString(0)));
+                roster.setPlayerId(Integer.parseInt(cursor.getString(0)));
                 roster.setName(cursor.getString(1));
                 roster.setNumber(Integer.parseInt(cursor.getString(2)));
                 roster.setRole(cursor.getString(3));

@@ -48,7 +48,6 @@ public class RosterEvent {
         this.name = name;
     }
     //Getters
-
     public int getPlayerId() {
         return player_id;
     }
@@ -72,7 +71,7 @@ public class RosterEvent {
     }
     public String getRole() {
         if(role.equals("offense")) {
-            return "DPS";
+            return "dps";
         }
         return role;
     }
@@ -82,7 +81,7 @@ public class RosterEvent {
 
 
     //Setters
-    public void setID(int player_id) {
+    public void setPlayerId(int player_id) {
         this.player_id = player_id;
     }
     public void setName(String name) {

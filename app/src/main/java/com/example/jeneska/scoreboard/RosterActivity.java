@@ -28,7 +28,6 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class RosterActivity extends AppCompatActivity {
 
@@ -202,15 +201,16 @@ public class RosterActivity extends AppCompatActivity {
          */
         public ArrayList<RosterEvent> extractPlayersFromJson(String rosterJSON) {
 
-            ArrayList<RosterEvent> roster = new ArrayList<>();
+            ArrayList<RosterEvent> roster = new ArrayList<RosterEvent>();
 
             try {
                 JSONObject baseJsonResponse = new JSONObject(rosterJSON);
+                JSONArray playersArray = baseJsonResponse.getJSONArray("players");
                 int team_id = baseJsonResponse.getInt("id");
 
-                JSONArray playersArray = baseJsonResponse.getJSONArray("players");
 
-               for (int i = 0; i < playersArray.length(); i++) {
+                for (int i = 0; i < playersArray.length(); i++) {
+
 
                         //Go to player object
                         JSONObject playerObject = playersArray.getJSONObject(i);
@@ -218,36 +218,28 @@ public class RosterActivity extends AppCompatActivity {
                         JSONObject attributes = playerObject.getJSONObject("attributes");
 
                         // Extract out player info from player object
-                        int player_id = playerObject.getInt("id");
-                        String name = playerObject.getString("name");
-                        String nationality = playerObject.getString("nationality");
-                        String familyName = playerObject.getString("familyName");
-                        String givenName = playerObject.getString("givenName");
+                       int player_id = playerObject.getInt("id");
+                       String name = playerObject.getString("name");
+                       String hometown = playerObject.getString("homeLocation");
+                       String nationality = playerObject.getString("nationality");
+                       String familyName = playerObject.getString("familyName");
+                       String givenName = playerObject.getString("givenName");
 
 
-                        //Extract out player info from attribute object from player object
-                        int player_number = attributes.getInt("player_number");
-                        String role = attributes.getString("role");
-                        String hometown = attributes.getString("hometown");
-
+                       //Extract out player info from attribute object from player object
+                       int player_number = attributes.getInt("player_number");
+                       String role = attributes.getString("role");
 
 
                         RosterEvent player = new RosterEvent(player_id, name, player_number, role, givenName, familyName, hometown, nationality, team_id);
                         roster.add(player);
-
-
-                        Log.d(LOG_TAG, "" + player.getPlayerId() + " " + player.getName() + " " + player.getHometown() + " test test test " + player.getNumber() + " " + playersArray.length());
-
-
-
-                        return roster;
-
                    }
 
-
+                return roster;
 
             } catch (JSONException e) {
                 Log.d(LOG_TAG, "Problem parsing the roster JSON results");
+                Log.d(LOG_TAG, "Hello: " + e);
             }
             return null;
         }
