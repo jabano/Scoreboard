@@ -21,11 +21,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class RosterActivity extends AppCompatActivity {
 
@@ -50,19 +53,19 @@ public class RosterActivity extends AppCompatActivity {
 
 
 
-    private void updateUi(RosterEvent roster) {
+    private void updateUi(ArrayList<RosterEvent> roster) {
         //Display the player name in the UI
         TextView rosterTextView = findViewById(R.id.playerInfo_text);
-        rosterTextView.setText("Name: " + roster.getName() + "\n"
-                + "Player Number: " + roster.getNumber() + "\n"
-                + "Role: " + roster.getRole() + "\n"
-                + "Full Name: " + roster.getGivenName()+ " " + roster.getFamilyName() + "\n"
-                + "Hometown: " + roster.getHometown() + ", " + roster.getNationality() + "\n"
-                + "Team ID: " + roster.getTeamId() + "\n"
-                + "Player ID: " + roster.getPlayerId());
 
-        mDbHelper.addPlayer(new RosterEvent(roster.getPlayerId(), roster.getName(), roster.getNumber(), roster.getRole(), roster.getGivenName(), roster.getFamilyName(),
-                roster.getHometown(), roster.getNationality(), roster.getTeamId()));
+        rosterTextView.setText("Name: " + roster.get(0).getName() + "\n" + "Size of roster table: " + roster.size());
+
+        for (int i = 0; i < roster.size(); i++) {
+            mDbHelper.addPlayer(new RosterEvent(roster.get(i).getPlayerId(), roster.get(i).getName(), roster.get(i).getNumber(), roster.get(i).getRole(), roster.get(i).getGivenName(), roster.get(i).getFamilyName(),
+                    roster.get(i).getHometown(), roster.get(i).getNationality(),roster.get(i).getTeamId()));
+
+
+        }
+
 
 
         List<RosterEvent> players = mDbHelper.getAllPlayers();
@@ -79,7 +82,7 @@ public class RosterActivity extends AppCompatActivity {
                     + "Hometown: " + r.getHometown() + ", " + r.getNationality() + "\n"
                     + "Team ID: " + r.getTeamId() + "\n"
                     + "Player ID: " + r.getPlayerId();
-            display.setText(log + "\n");
+            display.setText(log + "\n\n");
         }
 
 
@@ -87,10 +90,10 @@ public class RosterActivity extends AppCompatActivity {
 
     }
 
-    private class GladsAsyncTask extends AsyncTask<URL, Void, RosterEvent> {
+    private class GladsAsyncTask extends AsyncTask<URL, Void, ArrayList<RosterEvent>> {
 
         @Override
-        protected RosterEvent doInBackground(URL... urls) {
+        protected ArrayList<RosterEvent> doInBackground(URL... urls) {
             // Create URL object
             URL url = createUrl(GLADS_ROSTER_URL);
 
@@ -100,16 +103,14 @@ public class RosterActivity extends AppCompatActivity {
                 jsonResponse = makeHttpRequest(url);
             } catch (IOException e) {
                 // TODO Handle the IOException
+                Log.d(LOG_TAG, "ERROR in reading JSON");
             }
 
             // Extract relevant fields from the JSON response and create an {@link Event} object
-            RosterEvent roster = extractFeatureFromJson(jsonResponse);
+           ArrayList<RosterEvent> roster = extractPlayersFromJson(jsonResponse);
 
 
 
-
-
-            // Return the {@link Event} object as the result fo the {@link GladsAsyncTask}
             return roster;
         }
 
@@ -118,7 +119,7 @@ public class RosterActivity extends AppCompatActivity {
          * {@link GladsAsyncTask}).
          */
         @Override
-        protected void onPostExecute(RosterEvent roster) {
+        protected void onPostExecute(ArrayList<RosterEvent> roster) {
             if (roster == null) {
                 return;
             }
@@ -199,35 +200,52 @@ public class RosterActivity extends AppCompatActivity {
          * Return an {@link RosterEvent} object by parsing out information
          * about the first player from the input rosterJSON string.
          */
-        public RosterEvent extractFeatureFromJson(String rosterJSON) {
+        public ArrayList<RosterEvent> extractPlayersFromJson(String rosterJSON) {
+
+            ArrayList<RosterEvent> roster = new ArrayList<>();
+
             try {
                 JSONObject baseJsonResponse = new JSONObject(rosterJSON);
                 int team_id = baseJsonResponse.getInt("id");
 
                 JSONArray playersArray = baseJsonResponse.getJSONArray("players");
 
-                // If there are results in the players array
-                if (playersArray.length() > 0) {
-                    // Extract out the first feature
-                    JSONObject playerObject = playersArray.getJSONObject(0);
-                    JSONObject attributes = playerObject.getJSONObject("attributes");
+               for (int i = 0; i < playersArray.length(); i++) {
 
-                    // Extract out player info from player object
-                    String name = playerObject.getString("name");
-                    String nationality = playerObject.getString("nationality");
-                    String familyName = playerObject.getString("familyName");
-                    String givenName = playerObject.getString("givenName");
-                    int player_id = playerObject.getInt("id");
+                        //Go to player object
+                        JSONObject playerObject = playersArray.getJSONObject(i);
+                        //Go to nested attributes in player object
+                        JSONObject attributes = playerObject.getJSONObject("attributes");
 
-                    //Extract out player info from attribute object from player object
-                    int player_number = attributes.getInt("player_number");
-                    String role = attributes.getString("role");
-                    String hometown = attributes.getString("hometown");
+                        // Extract out player info from player object
+                        int player_id = playerObject.getInt("id");
+                        String name = playerObject.getString("name");
+                        String nationality = playerObject.getString("nationality");
+                        String familyName = playerObject.getString("familyName");
+                        String givenName = playerObject.getString("givenName");
 
-                    // Create a new {@link Event} object
-                    return new RosterEvent(player_id, name, player_number, role, givenName, familyName, hometown, nationality, team_id);
 
-                }
+                        //Extract out player info from attribute object from player object
+                        int player_number = attributes.getInt("player_number");
+                        String role = attributes.getString("role");
+                        String hometown = attributes.getString("hometown");
+
+
+
+                        RosterEvent player = new RosterEvent(player_id, name, player_number, role, givenName, familyName, hometown, nationality, team_id);
+                        roster.add(player);
+
+
+                        Log.d(LOG_TAG, "" + player.getPlayerId() + " " + player.getName() + " " + player.getHometown() + " test test test " + player.getNumber() + " " + playersArray.length());
+
+
+
+                        return roster;
+
+                   }
+
+
+
             } catch (JSONException e) {
                 Log.d(LOG_TAG, "Problem parsing the roster JSON results");
             }
