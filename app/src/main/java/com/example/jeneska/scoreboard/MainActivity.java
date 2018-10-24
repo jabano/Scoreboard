@@ -1,6 +1,5 @@
 package com.example.jeneska.scoreboard;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,11 +26,12 @@ public class MainActivity extends AppCompatActivity {
             }
          });
 
+        //Start new activity for GladiatorsActivity
         TextView glads = findViewById(R.id.glads);
         glads.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent gladsIntent = new Intent(MainActivity.this, GladsActivity.class);
+                Intent gladsIntent = new Intent(MainActivity.this, OwlActivity.class);
                 startActivity(gladsIntent);
             }
         });

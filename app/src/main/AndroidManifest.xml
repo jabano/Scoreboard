@@ -22,10 +22,10 @@
             android:name=".LiverpoolActivity"
             android:label="Liverpool FC" />
         <activity
-            android:name=".GladsActivity"
+            android:name=".OwlActivity"
             android:label="LA Gladiators" />
         <activity
-            android:name=".RosterActivity"
+            android:name=".OwlRosterActivity"
             android:label="Roster" />
     </application>
 

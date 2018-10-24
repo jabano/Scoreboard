@@ -1,6 +1,6 @@
 package com.example.jeneska.scoreboard;
 
-public class RosterEvent {
+public class OwlRosterEvent {
 
     //Name of player
     private String name;
@@ -29,8 +29,10 @@ public class RosterEvent {
     //team_id
     private int team_id;
 
+    //Constructors
+    public OwlRosterEvent() {}
 
-    public RosterEvent(int player_id, String name, int player_number, String role, String givenName, String familyName, String hometown, String nationality, int team_id) {
+    public OwlRosterEvent(int player_id, String name, int player_number, String role, String givenName, String familyName, String hometown, String nationality, int team_id) {
         this.name = name;
         this.number = player_number;
         this.hometown = hometown;
@@ -42,11 +44,7 @@ public class RosterEvent {
         this.team_id = team_id;
 
     }
-    public RosterEvent() {}
-    public RosterEvent(int player_id, String name) {
-        this.player_id = player_id;
-        this.name = name;
-    }
+
     //Getters
     public int getPlayerId() {
         return player_id;

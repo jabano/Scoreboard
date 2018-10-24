@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-public class GladsActivity  extends AppCompatActivity {
+public class OwlActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,7 +19,7 @@ public class GladsActivity  extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                Intent rosterIntent = new Intent(GladsActivity.this, RosterActivity.class);
+                Intent rosterIntent = new Intent(OwlActivity.this, OwlRosterActivity.class);
                 startActivity(rosterIntent);
             }
         });

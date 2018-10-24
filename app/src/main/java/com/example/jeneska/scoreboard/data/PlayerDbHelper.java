@@ -5,12 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
-import android.widget.TextView;
 
-import com.example.jeneska.scoreboard.R;
-import com.example.jeneska.scoreboard.RosterActivity;
-import com.example.jeneska.scoreboard.RosterEvent;
+import com.example.jeneska.scoreboard.OwlRosterEvent;
 import com.example.jeneska.scoreboard.data.PlayerContract.PlayerEntry;
 
 import java.util.ArrayList;
@@ -51,7 +47,7 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void addPlayer(RosterEvent roster) {
+    public void addPlayer(OwlRosterEvent roster) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -70,7 +66,7 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
 
     }
 
-    RosterEvent getPlayer(int id) {
+    OwlRosterEvent getPlayer(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String [] projection = {
@@ -92,15 +88,15 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
         if(cursor != null)
             cursor.moveToFirst();
 
-        RosterEvent roster = new RosterEvent(Integer.parseInt(cursor.getString(0)), cursor.getString(1),
+        OwlRosterEvent roster = new OwlRosterEvent(Integer.parseInt(cursor.getString(0)), cursor.getString(1),
                 Integer.parseInt(cursor.getString(2)), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
                 cursor.getString(7),Integer.parseInt(cursor.getString(8)));
 
         return roster;
     }
 
-    public List<RosterEvent> getAllPlayers() {
-        List<RosterEvent> rosterList = new ArrayList<RosterEvent>();
+    public List<OwlRosterEvent> getAllPlayers() {
+        List<OwlRosterEvent> rosterList = new ArrayList<OwlRosterEvent>();
 
         String selectQuery = "SELECT * FROM " + PlayerEntry.PLAYER_TABLE;
 
@@ -109,7 +105,7 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst()) {
             do {
-                RosterEvent roster = new RosterEvent();
+                OwlRosterEvent roster = new OwlRosterEvent();
                 roster.setPlayerId(Integer.parseInt(cursor.getString(0)));
                 roster.setName(cursor.getString(1));
                 roster.setNumber(Integer.parseInt(cursor.getString(2)));
