@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.example.jeneska.scoreboard.OwlRosterEvent;
 import com.example.jeneska.scoreboard.data.PlayerContract.PlayerEntry;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerDbHelper extends SQLiteOpenHelper {
+    public static String LOG_TAG = "PlayerDbHelper: ";
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "roster.db";
 
@@ -22,7 +24,7 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
 
     //Create table string
     private static final String SQL_CREATE_PLAYER_TABLE = "CREATE TABLE " + PlayerEntry.PLAYER_TABLE + " (" +
-            PlayerEntry.COLUMN_PLAYER_ID + " INTEGER, " +
+            PlayerEntry.COLUMN_PLAYER_ID + " INTEGER PRIMARY KEY, " +
             PlayerEntry.COLUMN_PLAYER_NAME + " TEXT, " +
             PlayerEntry.COLUMN_PLAYER_NUMBER + " INTEGER, " +
             PlayerEntry.COLUMN_ROLE + " TEXT, " +
@@ -47,6 +49,20 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public boolean dbEmpty() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + PlayerEntry.PLAYER_TABLE;
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.getCount() == 0) {
+            return true;
+        }
+
+
+        return false;
+
+    }
+
     public void addPlayer(OwlRosterEvent roster) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -66,7 +82,8 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
 
     }
 
-    OwlRosterEvent getPlayer(int id) {
+    public OwlRosterEvent getPlayer(int id) {
+
         SQLiteDatabase db = this.getReadableDatabase();
 
         String [] projection = {
@@ -91,6 +108,9 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
         OwlRosterEvent roster = new OwlRosterEvent(Integer.parseInt(cursor.getString(0)), cursor.getString(1),
                 Integer.parseInt(cursor.getString(2)), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
                 cursor.getString(7),Integer.parseInt(cursor.getString(8)));
+
+        cursor.close();
+
 
         return roster;
     }

@@ -18,12 +18,12 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
+
 
 
 public class OwlRosterActivity extends AppCompatActivity {
     private static final String GLADS_ROSTER_URL = "https://api.overwatchleague.com/teams/4406";
-    public static final String LOG_TAG = "Owl Roster Activity: ";
+    public static final String LOG_TAG = "OwlRosterActivity: ";
     private OwlAsyncTask mAsyncTask;
     private PlayerDbHelper mDbHelper;
 
@@ -33,50 +33,40 @@ public class OwlRosterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_roster);
         mAsyncTask = new OwlAsyncTask();
-        mAsyncTask.execute();
         mDbHelper = new PlayerDbHelper(this);
+
+        //If database is empty, call Glads_Roster_Url to update database
+        if(mDbHelper.dbEmpty()) {
+            mAsyncTask.execute();
+        }
+
+        //otherwise, updateUi with database if players table has data
+        else {
+
+            updateUi(mDbHelper);
+        }
 
 
     }
 
 
-    private void updateUi(ArrayList<OwlRosterEvent> roster) {
+    private void updateUi(PlayerDbHelper dbHelper) {
+
         //Display the player name in the UI
         TextView rosterTextView = findViewById(R.id.playerInfo_text);
 
-        rosterTextView.setText("Name: " + roster.get(0).getName() + "\n" + "Size of roster table: " + roster.size());
-
-        for (int i = 0; i < roster.size(); i++) {
-            mDbHelper.addPlayer(new OwlRosterEvent(roster.get(i).getPlayerId(), roster.get(i).getName(), roster.get(i).getNumber(), roster.get(i).getRole(), roster.get(i).getGivenName(), roster.get(i).getFamilyName(),
-                    roster.get(i).getHometown(), roster.get(i).getNationality(), roster.get(i).getTeamId()));
-
-
-        }
+        //Test data
+        rosterTextView.setText(dbHelper.getPlayer(4144).getHometown() + "\n" +
+        dbHelper.getPlayer(4144).getName() + "\n" +
+        dbHelper.getPlayer(4644).getName() + "\n" +
+                dbHelper.getPlayer(4645).getName());
 
 
-        List<OwlRosterEvent> players = mDbHelper.getAllPlayers();
-
-
-        TextView display = findViewById(R.id.tableCount_text);
-
-
-        for (OwlRosterEvent r : players) {
-            String log = "Name: " + r.getName() + "\n"
-                    + "Player Number: " + r.getNumber() + "\n"
-                    + "Role: " + r.getRole() + "\n"
-                    + "Full Name: " + r.getGivenName() + " " + r.getFamilyName() + "\n"
-                    + "Hometown: " + r.getHometown() + ", " + r.getNationality() + "\n"
-                    + "Team ID: " + r.getTeamId() + "\n"
-                    + "Player ID: " + r.getPlayerId();
-            display.setText(log + "\n\n");
-        }
     }
 
 
 
-
-
-    public class OwlAsyncTask extends AsyncTask<URL, Void, ArrayList<OwlRosterEvent>> {
+    private class OwlAsyncTask extends AsyncTask<URL, Void, ArrayList<OwlRosterEvent>> {
 
 
 
@@ -87,14 +77,20 @@ public class OwlRosterActivity extends AppCompatActivity {
 
             // Perform HTTP request to the URL and receive a JSON response back
             String jsonResponse = "";
+            // Extract relevant fields from the JSON response and create an {@link Event} object
+
+
             try {
+
                 jsonResponse = httpRequest.makeHttpRequest(url);
+
+
+
             } catch (IOException e) {
                 // TODO Handle the IOException
                 Log.d(LOG_TAG, "ERROR in reading JSON");
             }
 
-            // Extract relevant fields from the JSON response and create an {@link Event} object
             ArrayList<OwlRosterEvent> roster = extractPlayersFromJson(jsonResponse);
 
 
@@ -102,22 +98,24 @@ public class OwlRosterActivity extends AppCompatActivity {
             return roster;
         }
 
+
         @Override
         protected void onPostExecute(ArrayList<OwlRosterEvent> roster) {
             if (roster == null) {
                 return;
             }
 
-            updateUi(roster);
+            updateUi(mDbHelper);
         }
+
 
 
 
         /**
          * Return an {@link OwlRosterEvent} object by parsing out information
-         * about the first player from the input rosterJSON string.
+         * about the players from the input rosterJSON string.
          */
-        public ArrayList<OwlRosterEvent> extractPlayersFromJson(String rosterJSON) {
+        private ArrayList<OwlRosterEvent> extractPlayersFromJson(String rosterJSON) {
 
             ArrayList<OwlRosterEvent> roster = new ArrayList<OwlRosterEvent>();
 
@@ -150,7 +148,12 @@ public class OwlRosterActivity extends AppCompatActivity {
 
 
                     OwlRosterEvent player = new OwlRosterEvent(player_id, name, player_number, role, givenName, familyName, hometown, nationality, team_id);
+                    //Add player to array list
                     roster.add(player);
+                    //Add player to db
+                    mDbHelper.addPlayer(player);
+
+
                 }
 
                 return roster;
@@ -159,7 +162,9 @@ public class OwlRosterActivity extends AppCompatActivity {
                 Log.d(LOG_TAG, "Problem parsing the roster JSON results", e);
 
             }
+
             return null;
+
         }
     }
 
