@@ -27,6 +27,10 @@
         <activity
             android:name=".OwlRosterActivity"
             android:label="Roster" />
+        <activity
+            android:name=".OwlPlayerActivity"
+            android:label="Player Information" />
+
     </application>
 
 </manifest>

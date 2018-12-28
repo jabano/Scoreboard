@@ -69,8 +69,18 @@ public class OwlRosterEvent {
     }
     public String getRole() {
         if(role.equals("offense")) {
-            return "dps";
+            return "Damage";
         }
+        else if(role.equals("tank")) {
+            return "Tank";
+        }
+        else if(role.equals("support")) {
+            return "Support";
+        }
+        else if(role.equals("flex")) {
+            return "Flex";
+        }
+
         return role;
     }
     public int getTeamId() {

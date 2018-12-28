@@ -11,14 +11,16 @@ import com.example.jeneska.scoreboard.OwlRosterEvent;
 import com.example.jeneska.scoreboard.data.PlayerContract.PlayerEntry;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class PlayerDbHelper extends SQLiteOpenHelper {
-    public static String LOG_TAG = "PlayerDbHelper: ";
+public class DbHelper extends SQLiteOpenHelper {
+    public static final String DATABASE_PATH = "/data/data/com.example.jeneska.scoreboard/databases/";
+    public static String LOG_TAG = "DbHelper: ";
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "roster.db";
 
-    public PlayerDbHelper(Context context) {
+    public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -32,7 +34,8 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
             PlayerEntry.COLUMN_FAMILY_NAME + " TEXT, " +
             PlayerEntry.COLUMN_HOMETOWN + " TEXT, " +
             PlayerEntry.COLUMN_NATIONALITY + " TEXT, " +
-            PlayerEntry.COLUMN_TEAM_ID + " INTEGER)";
+            PlayerEntry.COLUMN_TEAM_ID + " INTEGER, " +
+            PlayerEntry.COLUMN_UNIX + " INTEGER DEFAULT (cast(strftime('%s','now') as INTEGER)))";
 
 
 
@@ -47,6 +50,13 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_ENTRIES);
         onCreate(db);
     }
+
+    //drop and recreate table
+    public void updateDB(SQLiteDatabase db) {
+        db.execSQL(SQL_DELETE_ENTRIES);
+        onCreate(db);
+    }
+
 
     public boolean dbEmpty() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -148,12 +158,37 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
         return cursor.getCount();
     }
 
+    public long getUpdatedDate() {
+        long date = 0;
+        SQLiteDatabase db = this.getWritableDatabase();
 
+        if(!isFieldExist(PlayerEntry.PLAYER_TABLE, PlayerEntry.COLUMN_UNIX)) {
+            updateDB(db);
+        }
 
+        String selectQuery = "SELECT " + PlayerEntry.COLUMN_UNIX + " FROM " + PlayerEntry.PLAYER_TABLE + " ORDER BY " + PlayerEntry.COLUMN_UNIX + " LIMIT 1";
+        Cursor cursor = db.rawQuery(selectQuery, null);
 
+        if(cursor.getCount() == 1) {
+            cursor.moveToFirst();
+            date = cursor.getLong(0);
+        }
+        cursor.close();
 
+        return date;
+    }
 
-
-
-
+    public boolean isFieldExist(String tableName, String fieldName) {
+        boolean isExist = false;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("PRAGMA table_info("+tableName+")",null);
+        cursor.moveToFirst();
+        do {
+            String currentColumn = cursor.getString(1);
+            if (currentColumn.equals(fieldName)) {
+                isExist = true;
+            }
+        } while (cursor.moveToNext());
+        return isExist;
+    }
 }

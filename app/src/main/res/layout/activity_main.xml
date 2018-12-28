@@ -25,6 +25,14 @@
         android:layout_marginTop="8dp"
         android:text="LA Gladiators" />
 
+    <TextView
+        android:id="@+id/defiant"
+        style="@style/TeamStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Toronto Defiant" />
+
 
 
 

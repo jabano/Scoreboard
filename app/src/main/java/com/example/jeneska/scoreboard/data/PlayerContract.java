@@ -14,11 +14,8 @@ public class PlayerContract {
         public final static String COLUMN_HOMETOWN = "hometown";
         public final static String COLUMN_NATIONALITY = "nationality";
         public final static String COLUMN_TEAM_ID = "teamId";
-
-
-
-
-
-
+        public final static String COLUMN_UNIX = "lastUpdated";
     }
+
+
 }

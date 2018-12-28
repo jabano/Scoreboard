@@ -13,7 +13,7 @@ public class OwlActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team);
 
-        //Roster TextView will have an onClickListener to open the roster activity
+        //Roster TextView will have an onClickListener to open the roster activity on Owl activity, after clicking on a Owl team from the front page
         TextView gladsRoster_textView = findViewById(R.id.roster_text);
         gladsRoster_textView.setOnClickListener(new View.OnClickListener() {
 
@@ -23,5 +23,7 @@ public class OwlActivity extends AppCompatActivity {
                 startActivity(rosterIntent);
             }
         });
+
+
     }
 }
