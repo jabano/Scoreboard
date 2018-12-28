@@ -44,23 +44,17 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        //cache for online data
         db.execSQL(SQL_DELETE_ENTRIES);
         onCreate(db);
     }
 
     public boolean dbEmpty() {
         SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = "SELECT * FROM " + PlayerEntry.PLAYER_TABLE;
+        String selectQuery = "SELECT * FROM " + PlayerEntry.PLAYER_TABLE + " ORDER BY " + PlayerEntry.COLUMN_ROLE;
 
         Cursor cursor = db.rawQuery(selectQuery, null);
-        if (cursor.getCount() == 0) {
-            return true;
-        }
 
-
-        return false;
-
+        return cursor.getCount() == 0;
     }
 
     public void addPlayer(OwlRosterEvent roster) {
@@ -118,7 +112,7 @@ public class PlayerDbHelper extends SQLiteOpenHelper {
     public ArrayList<OwlRosterEvent> getAllPlayers() {
         ArrayList<OwlRosterEvent> rosterList = new ArrayList<OwlRosterEvent>();
 
-        String selectQuery = "SELECT * FROM " + PlayerEntry.PLAYER_TABLE;
+        String selectQuery = "SELECT * FROM " + PlayerEntry.PLAYER_TABLE + " ORDER BY " + PlayerEntry.COLUMN_ROLE;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
